@@ -24,7 +24,10 @@ namespace Form2
 
         protected void Button1_Click1(object sender, EventArgs e)
         {
-
+            if (!validateForm())
+            {
+                return;
+            }
             string sqlConnectionString = ConfigurationManager.ConnectionStrings["ConnString"].ConnectionString;
 
             SqlConnection con = new SqlConnection(sqlConnectionString);
@@ -33,8 +36,8 @@ namespace Form2
             {
 
                 string query = @"
-                INSERT INTO Form Data (FirstName, MiddleName, LastName, PhoneNumber, DateOfBirth, EmailID,  Address, , Sex, Stream)
-                VALUES (@FirstName, @MiddleName, @LastName, @PhoneNumber, @DateOfBirth , @EmailID, @Address @Sex, @Stream)";
+                INSERT INTO Form Data (FirstName, MiddleName, LastName, PhoneNumber, DateOfBirth, EmailID,  Address,  Sex, Stream)
+                VALUES (@FirstName, @MiddleName, @LastName, @PhoneNumber, @DateOfBirth , @EmailID, @Address, @Sex, @Stream)";
 
 
                 SqlCommand cmd = new SqlCommand(query, con);
@@ -71,7 +74,7 @@ namespace Form2
 
                 if (rowsAffected > 0)
                 {
-                    Label2.Text = "Successfully inserted!";
+                    MessageLabel.Text = "Successfully inserted!";
 
                     TextBox1.Text = "";
                     TextBox2.Text = "";
@@ -87,21 +90,63 @@ namespace Form2
                 }
                 else
                 {
-                    Label2.Text = "No rows were inserted. Please check your data.";
+                    MessageLabel.Text = "No rows were inserted. Please check your data.";
                 }
             }
             catch (SqlException ex)
             {
-                Label1.Text = "An error occurred: " + ex.Message;
+                MessageLabel.Text = "An error occurred: " + ex.Message;
             }
             finally
             {
-                
+
                 if (con != null && con.State == ConnectionState.Open)
                 {
                     con.Close();
                 }
             }
+        }
+        Boolean validateForm()
+        {
+            if(TextBox1.Text.Length == 0)
+            {
+                MessageLabel.Text = "Please Give first Name";
+                return false;
+            }else if(TextBox3.Text.Length == 0)
+            {
+                MessageLabel.Text = "Please Give last Name";
+                return false;
+            }
+            else if (TextBox4.Text.Length != 10)
+            {
+                MessageLabel.Text = "Phone Number must be of length 10";
+                return false;
+            }else if(TextBox5.Text.Length == 0)
+            {
+                MessageLabel.Text = "Please give Date Of Birth";
+                return false;
+            }
+            else if(TextBox6.Text.Length == 0)
+            {
+                MessageLabel.Text = "Please Give your email";
+                return false;
+            }
+            else if(TextBox7.Text.Length == 0)
+            {
+                MessageLabel.Text = "Please Give your address";
+                return false;
+            }
+            else if (!RadioButton1.Checked && !RadioButton2.Checked)
+            {
+                MessageLabel.Text = "Please give your gender";
+                return false;
+            }
+            else if(DropDownList1.SelectedIndex == 0)
+            {
+                MessageLabel.Text = "Please slect a stream";
+                return false;
+            }
+            return true;
         }
     }
 }
